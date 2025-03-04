@@ -1,0 +1,23 @@
+{
+  "name": "typography-website",
+  "version": "1.0.0",
+  "description": "A typography web app",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MasonPride/Typography-Website.git"
+  },
+  "author": "Mason Pride",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MasonPride/Typography-Website/issues"
+  },
+  "homepage": "https://github.com/MasonPride/Typography-Website#readme",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
