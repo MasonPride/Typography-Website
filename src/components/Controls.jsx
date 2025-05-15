@@ -18,7 +18,7 @@ export default function Controls({
           max="100"
           value={fontSize}
           onChange={(e) => setFontSize(e.target.value)}
-          className="w-full"
+          className="w-full accent-blue-900"
         />
       </div>
       <div>
@@ -30,7 +30,7 @@ export default function Controls({
           step="0.1"
           value={lineHeight}
           onChange={(e) => setLineHeight(e.target.value)}
-          className="w-full"
+          className="w-full accent-blue-900"
         />
       </div>
       <div>
