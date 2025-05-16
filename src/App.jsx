@@ -9,6 +9,7 @@ import Controls from "./components/Controls";
 import FontCard from "./components/FontCard";
 import FontSearch from "./components/FontSearch";
 import TooltipButton from "./components/TooltipButton";
+import ScrollToTopButton from "./components/ScrollToTopButton";
 
 const fontTypes = [
   "serif",
@@ -18,7 +19,7 @@ const fontTypes = [
   "handwriting",
 ];
 
-// API Key
+// API URL
 const API_URL = `https://www.googleapis.com/webfonts/v1/webfonts?key=${
   import.meta.env.VITE_GOOGLE_FONTS_API_KEY
 }&sort=alpha`;
@@ -30,19 +31,19 @@ export default function App() {
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit..."
   );
 
-  // Controls init
+  // Controls
   const [fontSize, setFontSize] = useState(24);
   const [lineHeight, setLineHeight] = useState(1.5);
   const [fontWeight, setFontWeight] = useState("400");
   const [color, setColor] = useState("#ffffff");
   const [letterSpacing, setLetterSpacing] = useState(0);
 
-  const [pinnedFont, setPinnedFont] = useState(null);
+  // Font management
   const [page, setPage] = useState(1);
   const fontsPerPage = 10;
-
   const [randomFonts, setRandomFonts] = useState([]);
   const [isRandomMode, setIsRandomMode] = useState(false);
+  const [pinnedFonts, setPinnedFonts] = useState([]);
 
   useEffect(() => {
     WebFont.load({
@@ -62,18 +63,18 @@ export default function App() {
   useEffect(() => {
     setPage(1);
     setIsRandomMode(false);
-  }, [selectedCategory, pinnedFont]);
+  }, [selectedCategory]);
 
-  const filteredFonts = fonts.filter(
-    (font) =>
-      font.category === selectedCategory &&
-      (!pinnedFont || font.family !== pinnedFont.family)
-  );
-
-  const paginatedFonts = filteredFonts.slice(
-    (page - 1) * fontsPerPage,
-    page * fontsPerPage
-  );
+  const togglePinFont = (font) => {
+    setPinnedFonts((prev) => {
+      const isPinned = prev.find((f) => f.family === font.family);
+      if (isPinned) {
+        return prev.filter((f) => f.family !== font.family);
+      } else {
+        return [...prev, font];
+      }
+    });
+  };
 
   const getFontTypeDescription = (type) => {
     switch (type) {
@@ -92,8 +93,20 @@ export default function App() {
     }
   };
 
+  // Filter and exclude pinned fonts from regular results
+  const filteredFonts = fonts.filter(
+    (font) =>
+      font.category === selectedCategory &&
+      !pinnedFonts.find((f) => f.family === font.family)
+  );
+
+  const paginatedFonts = filteredFonts.slice(
+    (page - 1) * fontsPerPage,
+    page * fontsPerPage
+  );
+
   return (
-    <div className="min-h-screen w-full bg-gray-900 text-gray-100">
+    <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col">
       <div className="max-w-3xl mx-auto px-4 py-6">
         <h1
           className="text-6xl font-bold text-center my-20 tracking-tight text-white-400 transition-transform duration-300 ease-in-out hover:scale-105"
@@ -120,7 +133,10 @@ export default function App() {
             />
           </div>
           <div className="mt-4">
-            <FontSearch fonts={fonts} onSelect={setPinnedFont} />
+            <FontSearch
+              fonts={fonts}
+              onSelect={(font) => togglePinFont(font)}
+            />
           </div>
         </div>
 
@@ -140,7 +156,6 @@ export default function App() {
               const shuffled = [...fonts].sort(() => 0.5 - Math.random());
               setRandomFonts(shuffled.slice(0, 10));
               setIsRandomMode(true);
-              setPinnedFont(null);
             }}
             className="px-4 py-2 rounded bg-indigo-700 text-white hover:bg-indigo-800 shadow-md transition"
           >
@@ -148,35 +163,46 @@ export default function App() {
           </button>
         </div>
       </div>
+
+      {/* Font Cards */}
       <div className="mb-10">
-        {isRandomMode ? (
-          randomFonts.map((font) => (
-            <FontCard
-              key={font.family}
-              fontFamily={font.family}
-              text={text}
-              fontSize={fontSize}
-              lineHeight={lineHeight}
-              fontWeight={fontWeight}
-              color={color}
-              letterSpacing={letterSpacing}
-            />
-          ))
-        ) : (
-          <>
-            {pinnedFont && (
-              <FontCard
-                key={pinnedFont.family}
-                fontFamily={pinnedFont.family}
-                text={text}
-                fontSize={fontSize}
-                lineHeight={lineHeight}
-                fontWeight={fontWeight}
-                color={color}
-                letterSpacing={letterSpacing}
-              />
-            )}
-            {paginatedFonts.map((font) => (
+        {/* Pinned fonts always shown first */}
+        {pinnedFonts.map((font) => (
+          <FontCard
+            key={`pinned-${font.family}`}
+            fontFamily={font.family}
+            text={text}
+            fontSize={fontSize}
+            lineHeight={lineHeight}
+            fontWeight={fontWeight}
+            color={color}
+            letterSpacing={letterSpacing}
+            isPinned={true}
+            onTogglePin={() => togglePinFont(font)}
+          />
+        ))}
+
+        {/* Random or filtered font list */}
+        {isRandomMode
+          ? randomFonts
+              .filter(
+                (font) => !pinnedFonts.find((f) => f.family === font.family)
+              )
+              .map((font) => (
+                <FontCard
+                  key={font.family}
+                  fontFamily={font.family}
+                  text={text}
+                  fontSize={fontSize}
+                  lineHeight={lineHeight}
+                  fontWeight={fontWeight}
+                  color={color}
+                  letterSpacing={letterSpacing}
+                  isPinned={false}
+                  onTogglePin={() => togglePinFont(font)}
+                />
+              ))
+          : paginatedFonts.map((font) => (
               <FontCard
                 key={font.family}
                 fontFamily={font.family}
@@ -186,11 +212,13 @@ export default function App() {
                 fontWeight={fontWeight}
                 color={color}
                 letterSpacing={letterSpacing}
+                isPinned={false}
+                onTogglePin={() => togglePinFont(font)}
               />
             ))}
-          </>
-        )}
       </div>
+
+      {/* Pagination */}
       {!isRandomMode && (
         <div className="flex justify-center gap-4 mb-10">
           <button
@@ -209,6 +237,7 @@ export default function App() {
           </button>
         </div>
       )}
+      <ScrollToTopButton />
     </div>
   );
 }

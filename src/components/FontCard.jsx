@@ -9,6 +9,8 @@ export default function FontCard({
   fontWeight,
   color,
   letterSpacing,
+  onTogglePin,
+  isPinned,
 }) {
   useEffect(() => {
     WebFont.load({
@@ -44,6 +46,16 @@ export default function FontCard({
           <span>
             <strong>Letter Spacing:</strong> {letterSpacing}px
           </span>
+          <button
+            onClick={onTogglePin}
+            aria-label={isPinned ? "Unpin font" : "Pin font"}
+            className={`w-6 h-6 rounded-full border transition
+    ${
+      isPinned
+        ? "bg-blue-500 border-blue-500"
+        : "border-gray-500 hover:border-blue-400"
+    }`}
+          ></button>
         </div>
         <p
           style={{
