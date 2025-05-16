@@ -8,6 +8,7 @@ export default function FontCard({
   lineHeight,
   fontWeight,
   color,
+  letterSpacing,
 }) {
   useEffect(() => {
     WebFont.load({
@@ -17,7 +18,6 @@ export default function FontCard({
     });
   }, [fontFamily]);
 
-  // Determine readable font weight label
   const getWeightLabel = (weight) => {
     const weightNum = parseInt(weight, 10);
     if (weightNum <= 300) return "Thin";
@@ -26,10 +26,9 @@ export default function FontCard({
   };
 
   return (
-    <div className="w-full px-6 my-6">
-      <div className="max-w-screen-xl mx-auto p-6 rounded-lg border border-gray-200 shadow bg-white">
-        {/* Font Info Header */}
-        <div className="mb-4 text-sm text-gray-500 flex flex-wrap gap-x-4 gap-y-1">
+    <div className="px-4 my-6 w-full">
+      <div className="w-full max-w-screen-2xl mx-auto p-6 border border-gray-700 shadow bg-gray-800 rounded-lg transition-transform duration-300 ease-in-out hover:scale-105">
+        <div className="mb-4 text-sm text-gray-400 flex flex-wrap gap-x-4 gap-y-1">
           <span>
             <strong>Font:</strong> {fontFamily}
           </span>
@@ -42,9 +41,10 @@ export default function FontCard({
           <span>
             <strong>Line Spacing:</strong> {lineHeight}
           </span>
+          <span>
+            <strong>Letter Spacing:</strong> {letterSpacing}px
+          </span>
         </div>
-
-        {/* Preview Text */}
         <p
           style={{
             fontFamily,
@@ -52,6 +52,7 @@ export default function FontCard({
             lineHeight,
             fontWeight,
             color,
+            letterSpacing: `${letterSpacing}px`,
           }}
           className="break-words"
         >

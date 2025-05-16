@@ -1,11 +1,10 @@
-export default function TextInput({ text, setText }) {
+export default function TextInput({ setText }) {
   return (
     <textarea
-      className="w-full p-4 text-lg border rounded-md shadow resize-none"
-      rows="3"
-      value={text}
       onChange={(e) => setText(e.target.value)}
-      placeholder="Type here..."
+      rows="4"
+      className="w-full p-4 text-lg bg-gray-700 border border-gray-600 rounded-md shadow-sm text-gray-100 placeholder-gray-400 resize-none"
+      placeholder="Type something to preview..."
     />
   );
 }

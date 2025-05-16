@@ -33,15 +33,15 @@ export default function FontSearch({ fonts, onSelect }) {
         value={query}
         onChange={handleInputChange}
         placeholder="Search for a font..."
-        className="w-full p-2 border border-gray-300 rounded shadow-sm"
+        className="w-full p-3 bg-gray-700 border border-gray-600 rounded shadow-sm text-gray-100 placeholder-gray-400"
       />
       {suggestions.length > 0 && (
-        <ul className="absolute bg-white border border-gray-300 rounded shadow mt-1 w-full z-10">
+        <ul className="absolute bg-gray-800 border border-gray-600 rounded shadow mt-1 w-full z-10">
           {suggestions.map((font) => (
             <li
               key={font.family}
               onClick={() => handleSelect(font)}
-              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+              className="px-4 py-2 hover:bg-gray-700 cursor-pointer text-gray-100"
             >
               {font.family}
             </li>
